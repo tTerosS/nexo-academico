@@ -15,12 +15,23 @@ curl -fSL "https://getcomposer.org/download/latest-stable/composer.phar" -o bin/
 chmod +x bin/composer
 
 echo "===> 4. Instalando dependencias de Laravel..."
-# El parámetro --no-scripts evita que Composer busque el PHP global y se estrelle
 ./bin/frankenphp php-cli bin/composer install --no-dev --optimize-autoloader --no-scripts
 
 echo "===> 5. Ejecutando descubrimiento de paquetes..."
-# Ejecutamos manualmente el paso que bloqueamos arriba
 ./bin/frankenphp php-cli artisan package:discover --ansi
 
 echo "===> 6. Optimizando configuraciones..."
 ./bin/frankenphp php-cli artisan config:clear
+
+echo "===> 7. Configurando servidor web de producción..."
+cat << 'EOF' > Caddyfile
+{
+    frankenphp
+    admin off
+}
+:{$PORT} {
+    root * public
+    encode zstd br gzip
+    php_server
+}
+EOF
