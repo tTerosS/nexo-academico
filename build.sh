@@ -5,17 +5,15 @@ echo "===> 1. Compilando frontend..."
 npm install
 npm run build
 
-echo "===> 2. Descargando instalador de PHP portable..."
+echo "===> 2. Instalando PHP 8.3 precompilado..."
 mkdir -p bin
-curl -fsSL -o bin/spc https://dl.static-php.dev/v3/spc-bin/nightly/spc-linux-x86_64
-chmod +x bin/spc
-
-echo "===> 3. Instalando binario PHP 8.3 con extensiones..."
-./bin/spc download --with-php=8.3 --for-extensions="pdo,pdo_mysql,openssl,mbstring,tokenizer,xml,ctype,json,curl,zip"
-./bin/spc build "pdo,pdo_mysql,openssl,mbstring,tokenizer,xml,ctype,json,curl,zip" --build-cli
-
-cp buildroot/bin/php bin/php
+curl -fSL "https://dl.static-php.dev/static-php-cli/common/php-8.3.16-cli-linux-x86_64.tar.gz" -o php.tar.gz
+tar -xzf php.tar.gz -C bin/
+rm -f php.tar.gz
 chmod +x bin/php
+
+echo "===> 3. Verificando versión de PHP..."
+./bin/php -v
 
 echo "===> 4. Descargando Composer..."
 curl -sS https://getcomposer.org/installer | ./bin/php -- --install-dir=bin --filename=composer
