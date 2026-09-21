@@ -17,8 +17,10 @@ cat << 'EOF' > bin/php
 EOF
 chmod +x bin/php
 
-echo "===> 4. Descargando Composer..."
-curl -sS https://getcomposer.org/installer | ./bin/php -- --install-dir=bin --filename=composer
+echo "===> 4. Descargando Composer directamente..."
+# Descargamos el archivo compilado final en lugar de usar el script instalador
+curl -fSL "https://getcomposer.org/download/latest-stable/composer.phar" -o bin/composer
+chmod +x bin/composer
 
 echo "===> 5. Instalando dependencias de Laravel..."
 ./bin/php bin/composer install --no-dev --optimize-autoloader
