@@ -10,20 +10,23 @@ mkdir -p bin
 curl -fSL "https://github.com/dunglas/frankenphp/releases/latest/download/frankenphp-linux-x86_64" -o bin/frankenphp
 chmod +x bin/frankenphp
 
-echo "===> 3. Configurando entorno PHP..."
+echo "===> 3. Configurando entorno PHP global..."
 cat << 'EOF' > bin/php
 #!/usr/bin/env bash
 "$(dirname "$0")/frankenphp" php-cli "$@"
 EOF
 chmod +x bin/php
 
-echo "===> 4. Descargando Composer directamente..."
-# Descargamos el archivo compilado final en lugar de usar el script instalador
+# ESTA LÍNEA ES LA MAGIA: Conecta nuestro PHP local para que Laravel lo reconozca globalmente
+export PATH="$PWD/bin:$PATH"
+
+echo "===> 4. Descargando Composer..."
 curl -fSL "https://getcomposer.org/download/latest-stable/composer.phar" -o bin/composer
 chmod +x bin/composer
 
 echo "===> 5. Instalando dependencias de Laravel..."
-./bin/php bin/composer install --no-dev --optimize-autoloader
+# Como exportamos la ruta, ya podemos usar los comandos normales
+composer install --no-dev --optimize-autoloader
 
 echo "===> 6. Optimizando configuraciones..."
-./bin/php artisan config:clear
+php artisan config:clear
