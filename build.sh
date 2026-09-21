@@ -5,22 +5,20 @@ echo "===> 1. Compilando frontend..."
 npm install
 npm run build
 
-echo "===> 2. Buscando dinámicamente la última versión de PHP 8.3..."
+echo "===> 2. Descargando motor PHP oficial (FrankenPHP)..."
 mkdir -p bin
+# Enlace permanente directo de GitHub que NUNCA da 404 y no requiere descomprimir
+curl -fSL "https://github.com/dunglas/frankenphp/releases/latest/download/frankenphp-linux-x86_64" -o bin/frankenphp
+chmod +x bin/frankenphp
 
-# Extraemos el enlace exacto directamente desde la página de releases de GitHub
-HTML=$(curl -sL https://github.com/static-php/static-php-cli/releases/latest)
-REL_URL=$(echo "$HTML" | grep -o 'href="[^"]*php-8\.3[^"]*cli-linux-x86_64\.tar\.gz"' | head -n 1 | cut -d '"' -f 2)
-DOWNLOAD_URL="https://github.com${REL_URL}"
-
-echo "URL encontrada: $DOWNLOAD_URL"
-curl -fSL "$DOWNLOAD_URL" -o php.tar.gz
-
-tar -xzf php.tar.gz -C bin/
-rm -f php.tar.gz
+echo "===> 3. Configurando entorno PHP..."
+# Creamos un puente para que Laravel lo reconozca automáticamente como "php"
+cat << 'EOF' > bin/php
+#!/usr/bin/env bash
+"$(dirname "$0")/frankenphp" php-cli "$@"
+EOF
 chmod +x bin/php
 
-echo "===> 3. Verificando versión instalada..."
 ./bin/php -v
 
 echo "===> 4. Descargando Composer..."
