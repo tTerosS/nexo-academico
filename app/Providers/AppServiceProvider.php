@@ -6,6 +6,7 @@ use App\Models\Setting;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,7 +23,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Evita errores si la tabla aún no existe durante migraciones
+        // 1. Fuerza HTTPS en la nube para que Tailwind y el Login funcionen
+        if (env('APP_ENV') !== 'local') {
+            URL::forceScheme('https');
+        }
+
+        // 2. Tu código original intacto para las variables globales
         if (Schema::hasTable('settings')) {
             $institutionName = Setting::get('institution_name', 'GRUPO OSALVAC SRL');
             $primaryColor = Setting::get('primary_color', '#4f46e5');
