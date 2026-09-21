@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
-echo "===> 1. Compilando estilos y frontend con Node..."
+echo "===> 1. Compilando frontend..."
 npm install
 npm run build
 
-echo "===> 2. Descargando motor PHP portable..."
-curl -sSL "https://github.com/crazywhalecc/static-php-cli/releases/download/8.3.6/php-8.3.6-cli-linux-x86_64.tar.gz" -o php.tar.gz
+echo "===> 2. Descargando PHP portable..."
 mkdir -p bin
+curl -fSL "https://github.com/crazywhalecc/static-php-cli/releases/download/2.3.1/php-8.3.6-cli-linux-x86_64.tar.gz" -o php.tar.gz
 tar -xzf php.tar.gz -C bin/
 rm -f php.tar.gz
 chmod +x bin/php
@@ -18,5 +18,5 @@ curl -sS https://getcomposer.org/installer | ./bin/php -- --install-dir=bin --fi
 echo "===> 4. Instalando dependencias de Laravel..."
 ./bin/php bin/composer install --no-dev --optimize-autoloader
 
-echo "===> 5. Optimizando Laravel..."
+echo "===> 5. Optimizando configuraciones..."
 ./bin/php artisan config:clear
